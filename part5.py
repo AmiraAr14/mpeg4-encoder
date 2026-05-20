@@ -65,6 +65,7 @@ Y0, _, _ = bgr_to_ycbcr(frames[0])
 Y1, _, _ = bgr_to_ycbcr(frames[1])
 mvs, residuals_q = encode_pframe(Y1, Y0, qm)
 residual_map = np.abs(Y1 - Y0)
+residual_map_signed = Y1.astype(np.float32) - Y0.astype(np.float32)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -75,7 +76,7 @@ fig1.suptitle("Pipeline MPEG-4 — Visualisation des images", fontsize=16,
               fontweight='bold', y=0.97)
 
 gs1 = gridspec.GridSpec(
-    4, 4,
+    5, 4,
     figure=fig1,
     hspace=0.45,
     wspace=0.40,
@@ -147,6 +148,13 @@ ax.axis('off')
 
 fig1.savefig("part5_images.png", dpi=150, bbox_inches='tight')
 print("Figure 1 sauvegardée : part5_images.png")
+
+# ── Ligne 5 : résidu signé rouge/bleu ─────────────────────
+ax = fig1.add_subplot(gs1[4, 1])
+im = ax.imshow(residual_map_signed, cmap='RdBu_r', vmin=-50, vmax=50)
+ax.set_title("Résidu (P-frame 1 vs prev)", fontsize=11, pad=5)
+ax.axis('off')
+fig1.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
 
 
 # ══════════════════════════════════════════════════════════════
